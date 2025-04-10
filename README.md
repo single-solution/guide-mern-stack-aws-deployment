@@ -1,3 +1,183 @@
+# AWS Infrastructure Setup Guide
+
+This guide will walk you through setting up your AWS infrastructure step by step. Follow each step carefully to ensure everything is configured correctly.
+
+---
+
+### 1. Set AWS Region to US-West (Oregon)
+
+-  Open the **AWS Management Console**.
+-  In the top-right corner, click on the **Region dropdown**.
+-  Select **US-West (Oregon)** as your region.
+
+---
+
+### 2. Create a Secret Access Key
+
+-  Navigate to **IAM (Identity and Access Management)**.
+-  Go to **Users** and select your user account.
+-  Under the **Security Credentials** tab, click **Create Access Key**.
+-  Save the **Access Key ID** and **Secret Access Key** securely. You’ll need these for programmatic access to AWS services.
+
+---
+
+### 3. Launch an EC2 Instance
+
+-  Go to the **EC2 Dashboard**.
+-  Click **Launch Instance**.
+-  Configure the instance as follows:
+   -  **Name**: `projectname-server`
+   -  **AMI (Amazon Machine Image)**: Select **Ubuntu** (latest version).
+   -  **Instance Type**: Choose **t3** (general-purpose, cost-effective tier).
+   -  **Key Pair**: Create a new key pair named `projectname` and download the `.pem` file.
+   -  **Network Settings**: Ensure **HTTP traffic** is allowed in the security group.
+-  Click **Launch Instance**.
+
+---
+
+### 4. Create and Associate an Elastic IP
+
+-  Go to the **Elastic IPs** section in the EC2 Dashboard.
+-  Click **Allocate Elastic IP Address**.
+-  Once created, select the Elastic IP and click **Associate Elastic IP Address**.
+-  Choose the EC2 instance you launched earlier (`projectname-server`) and associate the IP.
+
+---
+
+### 5. Set Up Your Server
+
+-  Follow the **Web Hosting Guide** to configure your server. This typically involves:
+   -  Installing a web server (e.g., Nginx or Apache).
+   -  Setting up your application.
+   -  Configuring firewall rules.
+
+---
+
+### 6. Create S3 Buckets
+
+-  Go to the **S3 Dashboard**.
+-  Click **Create Bucket** and create the following buckets:
+   -  `projectname-admin`
+   -  `projectname-server`
+   -  `projectname-website`
+-  Ensure all buckets are created in the **US-West (Oregon)** region.
+
+---
+
+### 7. Configure Bucket Permissions
+
+-  While creating each bucket, **uncheck** the option for **"Block all public access"**.
+-  This allows public access to the buckets, which is necessary for static website hosting.
+
+---
+
+### 8. Enable Static Website Hosting
+
+-  For the `admin` and `website` buckets:
+   -  Go to the bucket’s **Properties** tab.
+   -  Scroll down to **Static Website Hosting** and enable it.
+   -  Set `index.html` as both the **Index Document** and **Error Document**.
+   -  Update the bucket policy to:
+
+```json
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Effect": "Allow",
+			"Principal": "*",
+			"Action": "s3:GetObject",
+			"Resource": "arn:aws:s3:::undrright-admin/*"
+		}
+	]
+}
+```
+
+---
+
+### 9. Update Server Bucket Policy
+
+-  For the `server` bucket, update the bucket policy to allow public read access:
+
+```json
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "PublicReadGetObject",
+			"Effect": "Allow",
+			"Principal": "*",
+			"Action": "s3:GetObject",
+			"Resource": "arn:aws:s3:::undrright-server/*"
+		}
+	]
+}
+```
+
+---
+
+### 10. Create CloudFront Distributions
+
+-  Go to the **CloudFront Dashboard**.
+-  Click **Create Distribution**.
+-  Create distributions for all three buckets:
+   -  `projectname-admin`
+   -  `projectname-server`
+   -  `projectname-website`
+-  Configure each distribution with the following settings:
+   -  **Origin Domain**: Select the corresponding S3 bucket.
+   -  **Viewer Protocol Policy**: Redirect HTTP to HTTPS.
+
+---
+
+### 11. Request an ACM Certificate
+
+-  Go to the **ACM (AWS Certificate Manager)** Dashboard.
+-  Request a certificate in the **US-East (Virginia)** region (required for CloudFront).
+-  Add all domain names (e.g., `domain.com`, `www.domain.com`).
+-  Choose **DNS Validation** and click **Request**.
+
+---
+
+### 12. Add CNAME Records to DNS
+
+-  After requesting the certificate, you’ll receive **CNAME records**.
+-  Go to your DNS provider (e.g., Route 53, GoDaddy) and add these CNAME records.
+-  Wait for the certificate status to change to **Issued**.
+
+---
+
+### 13. Update CloudFront with SSL Certificates
+
+-  Once the certificate is issued, go back to your CloudFront distributions.
+-  Update each distribution to use the new SSL certificate.
+
+---
+
+### 14. Add Alternate Domain Names
+
+-  Edit the `website` and `admin` CloudFront distributions:
+   -  Add **Alternate Domain Names** like:
+      -  `beta.undrright.com`
+      -  `www.beta.undrright.com`
+
+---
+
+### 15. Add DNS A Records
+
+-  Go to your DNS provider and add the following **A Records**:
+   -  `api.domain.com` and `www.api.domain.com` → **EC2 Instance IP Address**
+   -  `domain.com` and `www.domain.com` → **CloudFront Distribution Domain Name**
+   -  `admin.domain.com` and `www.admin.domain.com` → **CloudFront Distribution Domain Name**
+
+---
+
+### 16. Invalidate CloudFront Cache
+
+-  After completing the setup, invalidate the CloudFront cache to ensure the latest content is served:
+   -  Go to the **CloudFront Distribution** → **Invalidations Tab**.
+   -  Create a new invalidation with the path `/*`.
+
 # Server Setup Instructions
 
 ## 1. Update and Upgrade Server
@@ -82,8 +262,10 @@ sudo systemctl restart mongodb
 #### Follow these steps to enable port 27017 in the AWS Security Group:
 
 <blockquote>
+ 
 #### 1. Login
-- Log in to your AWS Management Console.
+
+-  Log in to your AWS Management Console.
 
 #### 2. Go to AWS EC2 Instance
 
@@ -297,183 +479,3 @@ Reference: [Cron Setup](https://snapshooter.com/learn/linux/cron)
 **Note:** Ensure that for JS, crontab has a separate bash file for proper syntax.
 
 ---
-
-## AWS Infrastructure Setup Guide
-
-This guide will walk you through setting up your AWS infrastructure step by step. Follow each step carefully to ensure everything is configured correctly.
-
----
-
-### 1. Set AWS Region to US-West (Oregon)
-
--  Open the **AWS Management Console**.
--  In the top-right corner, click on the **Region dropdown**.
--  Select **US-West (Oregon)** as your region.
-
----
-
-### 2. Create a Secret Access Key
-
--  Navigate to **IAM (Identity and Access Management)**.
--  Go to **Users** and select your user account.
--  Under the **Security Credentials** tab, click **Create Access Key**.
--  Save the **Access Key ID** and **Secret Access Key** securely. You’ll need these for programmatic access to AWS services.
-
----
-
-### 3. Launch an EC2 Instance
-
--  Go to the **EC2 Dashboard**.
--  Click **Launch Instance**.
--  Configure the instance as follows:
-   -  **Name**: `projectname-server`
-   -  **AMI (Amazon Machine Image)**: Select **Ubuntu** (latest version).
-   -  **Instance Type**: Choose **t3** (general-purpose, cost-effective tier).
-   -  **Key Pair**: Create a new key pair named `projectname` and download the `.pem` file.
-   -  **Network Settings**: Ensure **HTTP traffic** is allowed in the security group.
--  Click **Launch Instance**.
-
----
-
-### 4. Create and Associate an Elastic IP
-
--  Go to the **Elastic IPs** section in the EC2 Dashboard.
--  Click **Allocate Elastic IP Address**.
--  Once created, select the Elastic IP and click **Associate Elastic IP Address**.
--  Choose the EC2 instance you launched earlier (`projectname-server`) and associate the IP.
-
----
-
-### 5. Set Up Your Server
-
--  Follow the **Web Hosting Guide** to configure your server. This typically involves:
-   -  Installing a web server (e.g., Nginx or Apache).
-   -  Setting up your application.
-   -  Configuring firewall rules.
-
----
-
-### 6. Create S3 Buckets
-
--  Go to the **S3 Dashboard**.
--  Click **Create Bucket** and create the following buckets:
-   -  `projectname-admin`
-   -  `projectname-server`
-   -  `projectname-website`
--  Ensure all buckets are created in the **US-West (Oregon)** region.
-
----
-
-### 7. Configure Bucket Permissions
-
--  While creating each bucket, **uncheck** the option for **"Block all public access"**.
--  This allows public access to the buckets, which is necessary for static website hosting.
-
----
-
-### 8. Enable Static Website Hosting
-
--  For the `admin` and `website` buckets:
-   -  Go to the bucket’s **Properties** tab.
-   -  Scroll down to **Static Website Hosting** and enable it.
-   -  Set `index.html` as both the **Index Document** and **Error Document**.
-   -  Update the bucket policy for the `admin` bucket:
-
-```json
-{
-	"Version": "2012-10-17",
-	"Statement": [
-		{
-			"Effect": "Allow",
-			"Principal": "*",
-			"Action": "s3:GetObject",
-			"Resource": "arn:aws:s3:::undrright-admin/*"
-		}
-	]
-}
-```
-
----
-
-### 9. Update Server Bucket Policy
-
--  For the `server` bucket, update the bucket policy to allow public read access:
-
-```json
-{
-	"Version": "2012-10-17",
-	"Statement": [
-		{
-			"Sid": "PublicReadGetObject",
-			"Effect": "Allow",
-			"Principal": "*",
-			"Action": "s3:GetObject",
-			"Resource": "arn:aws:s3:::undrright-server/*"
-		}
-	]
-}
-```
-
----
-
-### 10. Create CloudFront Distributions
-
--  Go to the **CloudFront Dashboard**.
--  Click **Create Distribution**.
--  Create distributions for all three buckets:
-   -  `projectname-admin`
-   -  `projectname-server`
-   -  `projectname-website`
--  Configure each distribution with the following settings:
-   -  **Origin Domain**: Select the corresponding S3 bucket.
-   -  **Viewer Protocol Policy**: Redirect HTTP to HTTPS.
-
----
-
-### 11. Request an ACM Certificate
-
--  Go to the **ACM (AWS Certificate Manager)** Dashboard.
--  Request a certificate in the **US-East (Virginia)** region (required for CloudFront).
--  Add all domain names (e.g., `domain.com`, `www.domain.com`).
--  Choose **DNS Validation** and click **Request**.
-
----
-
-### 12. Add CNAME Records to DNS
-
--  After requesting the certificate, you’ll receive **CNAME records**.
--  Go to your DNS provider (e.g., Route 53, GoDaddy) and add these CNAME records.
--  Wait for the certificate status to change to **Issued**.
-
----
-
-### 13. Update CloudFront with SSL Certificates
-
--  Once the certificate is issued, go back to your CloudFront distributions.
--  Update each distribution to use the new SSL certificate.
-
----
-
-### 14. Add Alternate Domain Names
-
--  Edit the `website` and `admin` CloudFront distributions:
-   -  Add **Alternate Domain Names** like:
-      -  `beta.undrright.com`
-      -  `www.beta.undrright.com`
-
----
-
-### 15. Add DNS A Records
-
--  Go to your DNS provider and add the following **A Records**:
-   -  `api.domain.com` and `www.api.domain.com` → **EC2 Instance IP Address**
-   -  `domain.com` and `www.domain.com` → **CloudFront Distribution Domain Name**
-   -  `admin.domain.com` and `www.admin.domain.com` → **CloudFront Distribution Domain Name**
-
----
-
-### 16. Invalidate CloudFront Cache
-
--  After completing the setup, invalidate the CloudFront cache to ensure the latest content is served:
-   -  Go to the **CloudFront Distribution** → **Invalidations Tab**.
-   -  Create a new invalidation with the path `/*`.
