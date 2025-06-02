@@ -354,8 +354,8 @@ sudo nano server
 ```
 
 Replace the server file content with this
-
-<blockquote>                                   
+                                  
+```nginx
 server {
     server_name api.domain.com www.api.domain.com;
 
@@ -371,20 +371,41 @@ server {
     }
 
     # Cache-Control for images
+    location ~* \.(jpg|jpeg|png|gif|webp)$ {
+        add_header Cache-Control "max-age=604800, public";
+    }
+}
+
+```
+
+Create a separate file for the static website if it has not been added to the S3 bucket
+
+```nginx
+server {
+    server_name api.domain.com www.api.domain.com;
+
+    root /root/workspace/website;
+    index index.html index.htm;
+
+    location / {
+       try_files $uri $uri/ /index.html = 404;
+    }
+
     # Cache-Control for images
     location ~* \.(jpg|jpeg|png|gif|webp)$ {
         add_header Cache-Control "max-age=604800, public";
     }
+}
 
-</blockquote>
+```
 
 ### Allow nginx permissions
 
 ```bash
 sudo systemctl restart nginx
 
-# create a directory workspace and allow permissions
-# after creating the directory set permissions
+# Create a directory workspace and allow permissions
+# After creating the directory, set permissions
 sudo chown -R www-data:www-data /home/ubuntu/workspace
 sudo chmod -R 755 /home/ubuntu/workspace
 sudo chmod +x /home
@@ -412,7 +433,7 @@ sudo ufw allow 443
 
 ## 8. PM2 Configuration
 
-PM2 helps to automatically restart the server in case of file change or server crash
+PM2 helps to automatically restart the server in case of a file change or server crash
 
 ### Install PM2 service
 
@@ -422,15 +443,15 @@ sudo npm install pm2 -g
 
 ### Setup PM2 service
 
-Inside server directory `/home/ubuntu/workspace/serer` create a new file `ecosystem.config.js`:
+Inside the server directory `/home/ubuntu/workspace/server` create a new file `ecosystem.config.js`:
 
 ```bash
-cd /home/ubuntu/workspace/serer
+cd /home/ubuntu/workspace/server
 
 sudo nano ecosystem.config.js
 ```
 
-Replace this content in new file
+Replace this content in the file
 
 ```javascript
 module.exports = {
