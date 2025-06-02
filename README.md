@@ -239,7 +239,7 @@ security:
 ### Restart the server
 
 ```bash
-sudo systemctl restart mongodb
+sudo systemctl restart mongod
 ```
 
 ### Test Authentication:
@@ -254,7 +254,7 @@ mongo -u "username" -p "password" --authenticationDatabase "admin" --host localh
 
 ```bash
 sudo ufw allow 27017
-sudo systemctl restart mongodb
+sudo systemctl restart mongod
 ```
 
 ### Enable port in aws security group
