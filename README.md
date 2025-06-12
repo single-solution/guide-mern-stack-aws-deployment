@@ -427,23 +427,40 @@ server {
 }
 
 ```
+#### Restart Server
+```bash
+sudo systemctl restart nginx
+```
 
 ### Allow nginx permissions
 
+#### Create a directory workspace and allow permissions
+#### After creating the directory, set permissions
+```bash
+sudo chown -R www-data:www-data /home/ubuntu/workspace
+```
+```bash
+sudo chmod -R 755 /home/ubuntu/workspace
+```
+```bash
+sudo chmod +x /home
+```
+```bash
+sudo chmod +x /home/ubuntu
+```
+```bash
+sudo chmod +x /home/ubuntu/workspace
+```
+```bash
+sudo chmod +x /home /home/ubuntu /home/ubuntu/workspace
+```
+
+#### Restart Server
 ```bash
 sudo systemctl restart nginx
+```
 
-# Create a directory workspace and allow permissions
-# After creating the directory, set permissions
-sudo chown -R www-data:www-data /home/ubuntu/workspace
-sudo chmod -R 755 /home/ubuntu/workspace
-sudo chmod +x /home
-sudo chmod +x /home/ubuntu
-sudo chmod +x /home/ubuntu/workspace
-sudo chmod +x /home /home/ubuntu /home/ubuntu/workspace
-
-sudo systemctl restart nginx
-
+```bash
 sudo chown -R ubuntu:www-data /home/ubuntu/workspace
 ```
 
