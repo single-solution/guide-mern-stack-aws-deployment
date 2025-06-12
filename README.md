@@ -214,17 +214,17 @@ Reference: [Install MongoDB Community Edition on Ubuntu - MongoDB Manual v8.0 - 
 
 ### Create MongoDB User:
 
-# Connect to the database using the mongo shell
+#### Connect to the database using the mongo shell
 ```bash
 mongosh
 ```
 
-# in mongo shell
+#### in mongo shell
 ```bash
 use admin
 ```
 
-# Create a user with a unique password
+#### Create a user with a unique password
 ```bash
 db.createUser({  user: "single-solution",  pwd: "password-unescaped-characters",  roles: [{ role: "root", db: "admin" }]})
 ```
