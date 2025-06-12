@@ -290,7 +290,7 @@ sudo systemctl restart mongod
 
 -  Log in to your AWS Management Console.
 
-#### 2. Go to AWS EC2 Instance
+#### 2. Go to the AWS EC2 Instance
 
 -  Navigate to the **EC2 Dashboard** from the AWS Services menu.
 
@@ -298,7 +298,7 @@ sudo systemctl restart mongod
 
 -  From the list of instances, select the EC2 instance you want to configure.
 
-#### 4. Go to Security Tab
+#### 4. Go to the Security Tab
 
 -  In the instance details page, click on the **Security** tab.
 -  Locate and select the **security group** attached to the instance.
@@ -316,10 +316,10 @@ sudo systemctl restart mongod
 -  Click **Save rules** to apply the changes.
 </blockquote>
 
-### Test Mongodb url from firewall
+### Test MongoDB URL from firewall
 
+#### Use the AWS Public IPv4 address
 ```bash
-# use aws Public IPv4 address
 sudo nc -zv <server-ip> 27017
 ```
 
