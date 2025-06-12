@@ -58,7 +58,7 @@ This guide will walk you through setting up your AWS infrastructure step by step
 -  Go to the **S3 Dashboard**.
 -  Click **Create Bucket** and create the following buckets:
    -  `projectname-admin`
-   -  `projectname-server`
+   -  `projectname-storage`
    -  `projectname-website`
 -  Ensure all buckets are created in the **US-West (Oregon)** region.
 
@@ -87,7 +87,7 @@ This guide will walk you through setting up your AWS infrastructure step by step
 			"Effect": "Allow",
 			"Principal": "*",
 			"Action": "s3:GetObject",
-			"Resource": "arn:aws:s3:::undrright-admin/*"
+			"Resource": "<bucket-arn>/*"
 		}
 	]
 }
@@ -95,9 +95,9 @@ This guide will walk you through setting up your AWS infrastructure step by step
 
 ---
 
-### 9. Update Server Bucket Policy
+### 9. Update Storage Bucket Policy
 
--  For the `server` bucket, update the bucket policy to allow public read access:
+-  For the `storage` bucket, update the bucket policy to allow public read access:
 
 ```json
 {
@@ -108,7 +108,7 @@ This guide will walk you through setting up your AWS infrastructure step by step
 			"Effect": "Allow",
 			"Principal": "*",
 			"Action": "s3:GetObject",
-			"Resource": "arn:aws:s3:::undrright-server/*"
+			"Resource": "<bucket-arn>/*"
 		}
 	]
 }
@@ -122,7 +122,7 @@ This guide will walk you through setting up your AWS infrastructure step by step
 -  Click **Create Distribution**.
 -  Create distributions for all three buckets:
    -  `projectname-admin`
-   -  `projectname-server`
+   -  `projectname-storage`
    -  `projectname-website`
 -  Configure each distribution with the following settings:
    -  **Origin Domain**: Select the corresponding S3 bucket.
