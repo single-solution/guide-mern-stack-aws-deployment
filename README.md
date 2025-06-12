@@ -67,7 +67,7 @@ This guide will walk you through setting up your AWS infrastructure step by step
 ### 7. Configure Bucket Permissions
 
 -  While creating each bucket, **uncheck** the option for **"Block all public access"**.
--  This allows public access to the buckets, which is necessary for static website hosting.
+- This allows public access to the buckets, which is necessary for hosting static websites.
 
 ---
 
@@ -329,6 +329,12 @@ sudo nc -zv <server-ip> 27017
 mongodb://<username>:<password>@<ip>:27017/?authSource=admin&retryWrites=true&w=majority
 ```
 
+### MongoDB server env file URL
+
+```bash
+mongodb://<username>:<password>@localhost:27017/database/?authSource=admin&retryWrites=true&w=majority
+```
+
 ## 5. Configure Swap Space
 
 Reference: [Add Swap Space on Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-20-04)
@@ -508,25 +514,23 @@ Replace this content in the file
 
 ```javascript
 module.exports = {
-	apps: [
-		{
-			name: "server-name",
-			script: "./index.js", // replace with your start file, like 'app.js'
-			watch: true,
-			ignore_watch: ["node_modules", "assets"], // these will ignored to restart the server
-			watch_options: {
-				followSymlinks: false,
-			},
-			env: {
-				NODE_ENV: "development",
-				// Other environment variables
-			},
-			env_production: {
-				NODE_ENV: "production",
-				// Other production environment variables
-			},
-		},
-	],
+    apps: [{
+        name: "server-name",
+        script: "./index.js", // replace with your start file, like 'app.js'
+        watch: true,
+        ignore_watch: ["node_modules", "assets"], // these will ignored to restart the server
+        watch_options: {
+            followSymlinks: false,
+        },
+        env: {
+            NODE_ENV: "development",
+            // Other environment variables
+        },
+        env_production: {
+            NODE_ENV: "production",
+            // Other production environment variables
+        },
+    }, ],
 };
 ```
 
@@ -539,10 +543,15 @@ pm2 start ecosystem.config.js
 ## 9. Install Redis (if required)
 
 Commands:
-
 ```bash
 sudo apt install redis
+```
+
+```bash
 sudo systemctl enable redis-server
+```
+
+```bash
 sudo systemctl status redis
 ```
 
@@ -551,3 +560,47 @@ sudo systemctl status redis
 Reference: [Cron Setup](https://snapshooter.com/learn/linux/cron)
 
 **Note:** Ensure that for JS, crontab has a separate bash file for proper syntax.
+
+## 11. Deploy Everything to the panels just created
+
+### Add this to the server env
+
+```bash
+#  //////////////////////////////
+#  // AWS Credentials
+#  //////////////////////////////
+# AWS Credentials
+AWS_S3_ACCESS_KEY_ID                        = AKIAVPDFRENTDDBJIX2F
+AWS_S3_SECRET_ACCESS_KEY                    = F93TW2B/QQ9LgAzzr4Doot9ZDHIG4qkE
+AWS_S3_AWS_REGION                           = us-west-2
+AWS_S3_PROD_ADMIN_BUCKET                    = domain-admin
+AWS_S3_PROD_STORAGE_BUCKET                  = domain-storage
+AWS_S3_PROD_WEBSITE_BUCKET                  = domain-website
+AWS_S3_DEV_ADMIN_BUCKET                     = domain-admin-dev
+AWS_S3_DEV_STORAGE_BUCKET                   = domain-storage-dev
+AWS_S3_DEV_WEBSITE_BUCKET                   = pdomain-website-dev
+AWS_CLOUDFRONT_PROD_ADMIN_DISTRIBUTION_ID   = EMHSEASHXKP
+AWS_CLOUDFRONT_PROD_WEBSITE_DISTRIBUTION_ID = E7UWEDFGZ8O
+AWS_CLOUDFRONT_DEV_ADMIN_DISTRIBUTION_ID    = EASDAQON4UE
+AWS_CLOUDFRONT_DEV_WEBSITE_DISTRIBUTION_ID  = ED75I2ERWAP
+
+# EC2 Connection Details for Production
+EC2_PROD_USER       = ubuntu
+EC2_PROD_HOST       = ec2-1-1-1-1.us-west-2.compute.amazonaws.com
+EC2_PROD_KEY_PATH   = keyfile.pem absolute path
+EC2_PROD_REMOTE_DIR = /home/ubuntu/workspace/server
+
+# EC2 Connection Details for Development (if different)
+EC2_DEV_USER       = ubuntu
+EC2_DEV_HOST       = ec2-1-1-1-1.us-west-2.compute.amazonaws.com
+EC2_DEV_KEY_PATH   = keyfile.pem absolute path
+EC2_DEV_REMOTE_DIR = /home/ubuntu/workspace/server
+```
+
+#### Go to the Server Folder for the project, paste the provided deploy.js script
+Add more flags after the environment `--server --website --admin`. If flags are provided, it will update that one specifically; otherwise, if no flag is provided, it will update all.
+
+- Example Deployment `--dev for beta, --prod for live domain`
+```bash
+node deploy.js --dev --website
+```
