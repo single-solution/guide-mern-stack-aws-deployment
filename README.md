@@ -472,8 +472,14 @@ Command:
 
 ```bash
 sudo snap install --classic certbot
+```
+```bash
 sudo ln -s /snap/bin/certbot /usr/bin/certbot
+```
+```bash
 sudo certbot --nginx
+```
+```bash
 sudo ufw allow 443
 ```
 
@@ -493,7 +499,8 @@ Inside the server directory `/home/ubuntu/workspace/server` create a new file `e
 
 ```bash
 cd /home/ubuntu/workspace/server
-
+```
+```bash
 sudo nano ecosystem.config.js
 ```
 
@@ -529,7 +536,7 @@ module.exports = {
 pm2 start ecosystem.config.js
 ```
 
-## 9. Install Redis
+## 9. Install Redis (if required)
 
 Commands:
 
@@ -539,10 +546,8 @@ sudo systemctl enable redis-server
 sudo systemctl status redis
 ```
 
-## 10. Setup Cron Jobs
+## 10. Set up Cron Jobs (if required)
 
 Reference: [Cron Setup](https://snapshooter.com/learn/linux/cron)
 
 **Note:** Ensure that for JS, crontab has a separate bash file for proper syntax.
-
----
