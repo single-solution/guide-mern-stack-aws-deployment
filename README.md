@@ -158,8 +158,8 @@ This guide will walk you through setting up your AWS infrastructure step by step
 
 -  Edit the `website` and `admin` CloudFront distributions:
    -  Add **Alternate Domain Names** like:
-      -  `beta.undrright.com`
-      -  `www.beta.undrright.com`
+      -  `domain.com`
+      -  `www.domain.com`
 
 ---
 
@@ -184,6 +184,9 @@ This guide will walk you through setting up your AWS infrastructure step by step
 
 ```bash
 sudo apt update -y
+```
+
+```bash
 sudo apt upgrade -y
 ```
 
@@ -193,7 +196,9 @@ sudo apt upgrade -y
 
 ```bash
 curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash
+```
 
+```bash
 sudo apt-get install -y nodejs
 ```
 
@@ -212,11 +217,16 @@ Reference: [Install MongoDB Community Edition on Ubuntu - MongoDB Manual v8.0 - 
 ```bash
 # Connect to database using mongo shell
 mongosh
+```
 
+```bash
 # in mongo shell
 use admin
+```
 
-db.createUser({  user: "username",  pwd: "password-unescaped-characters",  roles: [{ role: "root", db: "admin" }]})
+```bash
+# Create a user with unique password
+db.createUser({  user: "single-solution",  pwd: "password-unescaped-characters",  roles: [{ role: "root", db: "admin" }]})
 ```
 
 ### Configure MongoDB authentication:
