@@ -214,18 +214,18 @@ Reference: [Install MongoDB Community Edition on Ubuntu - MongoDB Manual v8.0 - 
 
 ### Create MongoDB User:
 
+# Connect to the database using the mongo shell
 ```bash
-# Connect to database using mongo shell
 mongosh
 ```
 
-```bash
 # in mongo shell
+```bash
 use admin
 ```
 
+# Create a user with a unique password
 ```bash
-# Create a user with unique password
 db.createUser({  user: "single-solution",  pwd: "password-unescaped-characters",  roles: [{ role: "root", db: "admin" }]})
 ```
 
@@ -260,10 +260,13 @@ sudo systemctl restart mongod
 mongo -u "username" -p "password" --authenticationDatabase "admin" --host localhost --port 27017
 ```
 
-### Allow mongodb port in firewall:
+### Allow MongoDB port in firewall:
 
 ```bash
 sudo ufw allow 27017
+```
+
+```bash
 sudo systemctl restart mongod
 ```
 
@@ -330,6 +333,9 @@ After Nginx is installed, enable it:
 
 ```bash
 sudo ufw enable
+```
+
+```bash
 sudo ufw allow openSSH
 ```
 
