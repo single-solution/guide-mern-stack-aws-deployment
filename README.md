@@ -372,11 +372,14 @@ Nginx by default has a server file with permission to server the website. We are
 
 ```bash
 cd /etc/nginx/sites-enabled/
+```
 
+```bash
 sudo cp default server
+```
 
+```bash
 sudo nano server
-
 ```
 
 Replace the server file content with this
