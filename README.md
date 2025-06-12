@@ -262,7 +262,12 @@ sudo systemctl restart mongod
 #### Try connecting to MongoDB with authentication enabled by using:
 
 ```bash
-mongo -u "username" -p "password" --authenticationDatabase "admin" --host localhost --port 27017
+mongosh -u "single-solution" -p "password" --authenticationDatabase "admin" --host localhost --port 27017
+```
+
+#### Exit from mongosh
+```bash
+exit
 ```
 
 ### Allow MongoDB port in firewall:
