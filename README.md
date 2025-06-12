@@ -1,4 +1,4 @@
-# AWS Infrastructure Setup Guide
+# AWS Setup
 
 This guide will walk you through setting up your AWS infrastructure step by step. Follow each step carefully to ensure everything is configured correctly.
 
