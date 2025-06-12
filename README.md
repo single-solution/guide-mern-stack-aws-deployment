@@ -597,7 +597,7 @@ EC2_DEV_KEY_PATH   = keyfile.pem absolute path
 EC2_DEV_REMOTE_DIR = /home/ubuntu/workspace/server
 ```
 
-#### Go to the Server Folder for the project, paste the provided deploy.js script
+#### Go to the Server Folder for the project, paste the provided [deploy.js](./deploy.js) script
 Add more flags after the environment `--server --website --admin`. If flags are provided, it will update that one specifically; otherwise, if no flag is provided, it will update all.
 
 - Example Deployment `--dev for beta, --prod for live domain`
