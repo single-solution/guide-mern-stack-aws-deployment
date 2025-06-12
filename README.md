@@ -229,6 +229,11 @@ use admin
 db.createUser({  user: "single-solution",  pwd: "password-unescaped-characters",  roles: [{ role: "root", db: "admin" }]})
 ```
 
+#### Exit from mongosh
+```bash
+exit
+```
+
 ### Configure MongoDB authentication:
 
 ```bash
