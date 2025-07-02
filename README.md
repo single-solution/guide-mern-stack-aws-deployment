@@ -332,7 +332,7 @@ mongodb://<username>:<password>@<ip>:27017/?authSource=admin&retryWrites=true&w=
 ### MongoDB server env file URL
 
 ```bash
-mongodb://<username>:<password>@localhost:27017/database/?authSource=admin&retryWrites=true&w=majority
+mongodb://single-solution:<password>@localhost:27017/database?authSource=admin&retryWrites=true&w=majority
 ```
 
 ## 5. Configure Swap Space
