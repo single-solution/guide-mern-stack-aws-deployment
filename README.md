@@ -502,7 +502,11 @@ sudo chown -R ubuntu:www-data /home/ubuntu/workspace
 sudo apt update && sudo apt install -y fail2ban && sudo systemctl enable fail2ban && sudo systemctl start fail2ban
 ```
 
-## 7. Install SSL Certificates
+```bash
+sudo systemctl status fail2ban
+```
+
+## 8. Install SSL Certificates
 
 Reference: [Certbot Instructions](https://certbot.eff.org/instructions?ws=nginx&os=ubuntufocal)
 
@@ -521,7 +525,7 @@ sudo certbot --nginx
 sudo ufw allow 443
 ```
 
-## 8. PM2 Configuration
+## 9. PM2 Configuration
 
 PM2 helps to automatically restart the server in case of a file change or server crash
 
@@ -588,7 +592,7 @@ module.exports = {
 pm2 start ecosystem.config.js --env production && pm2 save && pm2 startup
 ```
 
-## 9. Install Redis (if required)
+## 10. Install Redis (if required)
 
 Commands:
 ```bash
@@ -603,13 +607,13 @@ sudo systemctl enable redis-server
 sudo systemctl status redis
 ```
 
-## 10. Set up Cron Jobs (if required)
+## 11. Set up Cron Jobs (if required)
 
 Reference: [Cron Setup](https://snapshooter.com/learn/linux/cron)
 
 **Note:** Ensure that for JS, crontab has a separate bash file for proper syntax.
 
-## 11. Deploy Everything to the panels just created
+## 12. Deploy Everything to the panels just created
 
 ### Add this to the server env
 
