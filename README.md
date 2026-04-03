@@ -350,7 +350,14 @@ echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 
 ### Install Nginx
 
-Follow this link: [How To Install Nginx on Ubuntu 20.04 | DigitalOcean](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-20-04)
+Reference: [How To Install Nginx on Ubuntu 20.04 | DigitalOcean](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-20-04)
+
+```bash
+sudo apt update && \
+sudo apt install -y nginx && \
+sudo systemctl start nginx && \
+sudo systemctl enable nginx
+```
 
 After Nginx is installed, enable it:
 
