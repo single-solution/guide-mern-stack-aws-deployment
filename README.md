@@ -381,7 +381,7 @@ Add the following configuration under the `http` block:
 http {
     # current code block
 
-    # max file size to be uploaded to server
+    limit_req_zone $binary_remote_addr zone=api_limit:10m rate=10r/s;
     client_max_body_size 1G;
 }
 ```
@@ -406,25 +406,37 @@ Replace the server file content with this
                                   
 ```nginx
 server {
-    server_name api.domain.com www.api.domain.com;
+    server_name api.domain.com;
 
-    root /root/workspace/server;
+    root /home/ubuntu/workspace/server;
     index index.html index.htm;
 
+    location /health {
+       access_log off;
+       return 200 "OK";
+       add_header Content-Type text/plain;
+    }
+
     location / {
+       limit_req zone=api_limit burst=20 nodelay;
        proxy_pass http://127.0.0.1:5010;
        proxy_http_version 1.1;
        proxy_set_header Upgrade $http_upgrade;
        proxy_set_header Connection "upgrade";
        proxy_set_header Host $host;
+       proxy_set_header X-Real-IP $remote_addr;
+       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+       proxy_set_header X-Forwarded-Proto $scheme;
+       proxy_read_timeout 60s;
+       proxy_connect_timeout 10s;
+       proxy_send_timeout 60s;
     }
 
-    # Cache-Control for images
-    location ~* \.(jpg|jpeg|png|gif|webp)$ {
-        add_header Cache-Control "max-age=604800, public";
+    location ~* \.(jpg|jpeg|png|gif|webp|svg|ico|css|js)$ {
+        expires 7d;
+        add_header Cache-Control "public, max-age=604800";
     }
 }
-
 ```
 
 Create a separate file for the static website if it has not been added to the S3 bucket
@@ -484,6 +496,12 @@ sudo systemctl restart nginx
 sudo chown -R ubuntu:www-data /home/ubuntu/workspace
 ```
 
+## 7. Install Failtoban
+
+```bash
+sudo apt update && sudo apt install -y fail2ban && sudo systemctl enable fail2ban && sudo systemctl start fail2ban
+```
+
 ## 7. Install SSL Certificates
 
 Reference: [Certbot Instructions](https://certbot.eff.org/instructions?ws=nginx&os=ubuntufocal)
@@ -528,30 +546,46 @@ Replace this content in the file
 
 ```javascript
 module.exports = {
-    apps: [{
-        name: "server-name",
-        script: "./index.js", // replace with your start file, like 'app.js'
-        watch: true,
-        ignore_watch: ["node_modules", "assets"], // these will ignored to restart the server
-        watch_options: {
-            followSymlinks: false,
-        },
-        env: {
-            NODE_ENV: "development",
-            // Other environment variables
-        },
-        env_production: {
-            NODE_ENV: "production",
-            // Other production environment variables
-        },
-    }, ],
+  apps: [
+    {
+      name: "server-name",
+      script: "./index.js",
+      watch: ["index.js", "src", "routes", "controllers", "models", "services"],
+      ignore_watch: [
+        "node_modules",
+        "assets",
+        "logs",
+        "tmp",
+        "cache",
+        "uploads",
+        "dist",
+        ".git",
+        ".env",
+        "*.log",
+        ".*"
+      ],
+      watch_options: {
+        followSymlinks: false,
+        usePolling: true,
+        interval: 1000
+      },
+      max_memory_restart: "700M",
+      env: {
+        NODE_ENV: "development"
+      },
+      env_production: {
+        NODE_ENV: "production",
+        NODE_OPTIONS: "--max-old-space-size=512"
+      }
+    }
+  ]
 };
 ```
 
 ### Start PM2 service
 
 ```bash
-pm2 start ecosystem.config.js
+pm2 start ecosystem.config.js --env production && pm2 save && pm2 startup
 ```
 
 ## 9. Install Redis (if required)
