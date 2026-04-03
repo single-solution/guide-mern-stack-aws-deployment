@@ -446,7 +446,7 @@ Create a separate file for the static website if it has not been added to the S3
 
 ```nginx
 server {
-    server_name api.domain.com www.api.domain.com;
+    server_name domain.com www.domain.com;
 
     root /home/ubuntu/workspace/website;
     index index.html index.htm;
