@@ -338,6 +338,13 @@ mongodb://single-solution:<password>@localhost:27017/database?authSource=admin&r
 ## 5. Configure Swap Space
 
 Reference: [Add Swap Space on Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-20-04)
+```bash
+sudo fallocate -l 4G /swapfile && \
+sudo chmod 600 /swapfile && \
+sudo mkswap /swapfile && \
+sudo swapon /swapfile && \
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+```
 
 ## 6. Create And Configure Nginx
 
