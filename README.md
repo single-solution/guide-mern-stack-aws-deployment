@@ -274,7 +274,9 @@ exit
 sudo systemctl restart mongod
 ```
 
-### Enable port in aws security group (for testing purposes only and destroy after the testing)
+### Enable port in AWS security group 
+#### Only enable public MongoDB access temporarily for testing.
+After testing, revert bindIp to 127.0.0.1 and remove port 27017 from the firewall and AWS security group.
 
 #### Follow these steps to enable port 27017 in the AWS Security Group:
 ```bash
@@ -360,24 +362,13 @@ echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 
 Reference: [How To Install Nginx on Ubuntu 20.04 | DigitalOcean](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-20-04)
 
-```bash
-sudo apt update && \
-sudo apt install -y nginx && \
-sudo systemctl start nginx && \
-sudo systemctl enable nginx
-```
-
-After Nginx is installed, enable it:
+#### After Nginx is installed, enable it:
 
 ```bash
-sudo ufw enable
+sudo ufw allow openSSH && sudo ufw allow 80 && sudo ufw allow 443 && sudo ufw enable && sudo ufw status
 ```
 
-```bash
-sudo ufw allow openSSH
-```
-
-### Configure Nginx to upload files of larger size
+### Configure Nginx to upload files of a larger size
 
 ```bash
 sudo nano /etc/nginx/nginx.conf
@@ -404,6 +395,10 @@ cd /etc/nginx/sites-enabled/
 
 ```bash
 sudo cp default server
+```
+
+```bash
+sudo rm /etc/nginx/sites-enabled/default
 ```
 
 ```bash
