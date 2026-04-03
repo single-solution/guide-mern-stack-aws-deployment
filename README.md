@@ -619,8 +619,8 @@ Reference: [Cron Setup](https://snapshooter.com/learn/linux/cron)
 #  // AWS Credentials
 #  //////////////////////////////
 # AWS Credentials
-AWS_S3_ACCESS_KEY_ID                        =YOUR_KEY
-AWS_S3_SECRET_ACCESS_KEY                    =YOUR_SECRET
+AWS_S3_ACCESS_KEY_ID                        = YOUR_KEY
+AWS_S3_SECRET_ACCESS_KEY                    = YOUR_SECRET
 AWS_S3_AWS_REGION                           = us-west-2
 AWS_S3_PROD_ADMIN_BUCKET                    = domain-admin
 AWS_S3_PROD_STORAGE_BUCKET                  = domain-storage
