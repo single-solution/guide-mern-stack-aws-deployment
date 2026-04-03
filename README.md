@@ -280,7 +280,7 @@ sudo ufw allow 27017
 sudo systemctl restart mongod
 ```
 
-### Enable port in aws security group
+### Enable port in aws security group (for testing purposes only and destroy after the testing)
 
 #### Follow these steps to enable port 27017 in the AWS Security Group:
 
