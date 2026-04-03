@@ -245,7 +245,7 @@ Add the following configuration:
 ```yaml
 net:
    port: 27017
-   bindIp: 0.0.0.0 # allows connections from all IPs
+   bindIp: 127.0.0.1 # allows connections from local system only
 
 security:
    authorization: "enabled"
@@ -270,12 +270,6 @@ mongosh -u "single-solution" -p "password" --authenticationDatabase "admin" --ho
 exit
 ```
 
-### Allow MongoDB port in firewall:
-
-```bash
-sudo ufw allow 27017
-```
-
 ```bash
 sudo systemctl restart mongod
 ```
@@ -283,6 +277,20 @@ sudo systemctl restart mongod
 ### Enable port in aws security group (for testing purposes only and destroy after the testing)
 
 #### Follow these steps to enable port 27017 in the AWS Security Group:
+```bash
+sudo nano /etc/mongod.conf
+```
+
+Add the following configuration:
+```yaml
+net:
+   bindIp: 0.0.0.0 # allows connections from all IPs
+```
+
+### Allow MongoDB port in firewall:
+```bash
+sudo ufw allow 27017
+```
 
 <blockquote>
  
@@ -445,7 +453,7 @@ Create a separate file for the static website if it has not been added to the S3
 server {
     server_name api.domain.com www.api.domain.com;
 
-    root /root/workspace/website;
+    root /home/ubuntu/workspace/website;
     index index.html index.htm;
 
     location / {
@@ -461,7 +469,7 @@ server {
 ```
 #### Restart Server
 ```bash
-sudo systemctl restart nginx
+sudo nginx -t && sudo systemctl restart nginx
 ```
 
 ### Allow nginx permissions
@@ -475,28 +483,19 @@ sudo chown -R www-data:www-data /home/ubuntu/workspace
 sudo chmod -R 755 /home/ubuntu/workspace
 ```
 ```bash
-sudo chmod +x /home
-```
-```bash
-sudo chmod +x /home/ubuntu
-```
-```bash
-sudo chmod +x /home/ubuntu/workspace
-```
-```bash
 sudo chmod +x /home /home/ubuntu /home/ubuntu/workspace
 ```
 
 #### Restart Server
 ```bash
-sudo systemctl restart nginx
+sudo nginx -t && sudo systemctl restart nginx
 ```
 
 ```bash
 sudo chown -R ubuntu:www-data /home/ubuntu/workspace
 ```
 
-## 7. Install Failtoban
+## 7. Install Fail2ban
 
 ```bash
 sudo apt update && sudo apt install -y fail2ban && sudo systemctl enable fail2ban && sudo systemctl start fail2ban
@@ -522,7 +521,10 @@ sudo ln -s /snap/bin/certbot /usr/bin/certbot
 sudo certbot --nginx
 ```
 ```bash
-sudo ufw allow 443
+sudo ufw allow 443 \
+sudo ufw allow 80 \
+sudo ufw allow 443 \
+sudo ufw status
 ```
 
 ## 9. PM2 Configuration
@@ -622,8 +624,8 @@ Reference: [Cron Setup](https://snapshooter.com/learn/linux/cron)
 #  // AWS Credentials
 #  //////////////////////////////
 # AWS Credentials
-AWS_S3_ACCESS_KEY_ID                        = AKIAVPDFRENTDDBJIX2F
-AWS_S3_SECRET_ACCESS_KEY                    = F93TW2B/QQ9LgAzzr4Doot9ZDHIG4qkE
+AWS_S3_ACCESS_KEY_ID                        =YOUR_KEY
+AWS_S3_SECRET_ACCESS_KEY                    =YOUR_SECRET
 AWS_S3_AWS_REGION                           = us-west-2
 AWS_S3_PROD_ADMIN_BUCKET                    = domain-admin
 AWS_S3_PROD_STORAGE_BUCKET                  = domain-storage
